@@ -21,9 +21,6 @@ RKButton::RKButton(HWND hWndParent, int x, int y, int w, int h)
 
     this->Create(hWndParent, x, y, w, h,
         WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_REALSIZEIMAGE | SS_CENTERIMAGE | SS_NOTIFY);
-
-    //background
-    this->SetWindowBkColor(THEME_COLOR);
 }
 
 RKButton::~RKButton()

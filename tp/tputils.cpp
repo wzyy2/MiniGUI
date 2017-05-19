@@ -237,5 +237,7 @@ int Suspend()
         printf("Power_Sleep success\n");
     else
         printf("Power_Sleep failure ret=%d\n", ret);
+
+    return ret;
 }
 }

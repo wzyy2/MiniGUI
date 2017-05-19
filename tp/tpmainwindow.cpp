@@ -29,7 +29,6 @@ public:
 
     virtual void OnCtrlNotified(MGWnd* sender, int id, int code, DWORD add_data)
     {
-        printf("OnCtrlNotified \n");
         if (code == STN_CLICKED) {
             if (sender == _caller->preview_button) {
                 if (_caller->preview_window)
@@ -64,10 +63,10 @@ public:
             } else if (sender == _caller->captrue_button) {
                 if (_caller->loading_indicator == NULL) {
                     _caller->loading_indicator = new LoadingIndicator(TPUtils::GetResource()->anim_wait,
-                        _caller->m_hWnd, _caller->GetWidth() / 2 - 98, _caller->GetHeight() / 2 - 98, 98, 98);
+                        _caller->m_hWnd, _caller->GetWidth() / 2 - 98,
+                        _caller->GetHeight() / 2 - 98, 98, 98);
                     _caller->loading_indicator->StartPlay();
-                }
-                else {
+                } else {
                     delete _caller->loading_indicator;
                     _caller->loading_indicator = NULL;
                 }
@@ -177,6 +176,7 @@ void TPMainWnd::InitButton()
     sleep_button = new RKButton(m_hWnd, 0, rc.bottom, MAIN_BTN_W, GetHeight() / 4);
     sleep_button->GetBound(&rc);
     sleep_button->SetTristate(&TPUtils::GetResource()->bmp_sleep, NULL);
+    sleep_button->SetWindowBkColor(THEME_COLOR);
 
     audio_button = new RKButton(m_hWnd, 0, rc.bottom, MAIN_BTN_W, GetHeight() / 4);
     audio_button->GetBound(&rc);

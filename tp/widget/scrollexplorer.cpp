@@ -14,19 +14,30 @@
 
 #include "tputils.h"
 
+class ScrollExplorerButtonNotification : public MGCtrlNotification {
+public:
+    ScrollExplorer* _caller;
+    ScrollExplorerButtonNotification(ScrollExplorer* caller) { _caller = caller; }
+
+    virtual void OnCtrlNotified(MGWnd* sender, int id, int code, DWORD add_data)
+    {
+        if (_caller->isPushed() == TRUE) {
+            printf("isPushed \n");
+        }
+    }
+};
+
 ScrollExplorer::ScrollExplorer(HWND hWndParent, int x, int y, int w, int h, DWORD dwStyle,
     DWORD dwStylEx, int Id)
-    : MGScrollView()
+    : TouchScrollWnd(hWndParent, x, y, w, h, dwStyle, dwStylEx, Id)
 {
-
-    Create(hWndParent, x, y, w, h, dwStyle, dwStylEx, Id);
-
+    button_notification = new ScrollExplorerButtonNotification(this);
     ShowPreview();
 }
 
 ScrollExplorer::~ScrollExplorer()
 {
-    DestroyWindow();
+    delete button_notification;
 }
 
 void ScrollExplorer::ShowPreview()
@@ -36,14 +47,14 @@ void ScrollExplorer::ShowPreview()
     int i;
 
     /* fake data */
-    for (i = 0; i < EXPLORER_ITEM_R * 2; i++) {
+    for (i = 0; i < EXPLORER_ITEM_R; i++) {
         for (int j = 0; j < EXPLORER_ITEM_C; j++) {
             MGStatic tmp;
 
             video_items.push_back(tmp);
 
             // window created in here will be deleted in father window destory
-            video_items[i * EXPLORER_ITEM_C + j].Create(m_hWnd, item_width * j, item_height * i,
+            video_items[i * EXPLORER_ITEM_C + j].Create(GetContainer(), item_width * j, item_height * i,
                 item_width, item_height, WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_REALSIZEIMAGE | SS_CENTERIMAGE);
 
             video_items[i * EXPLORER_ITEM_C + j].SetWindowBkColor(TPUtils::GetColorkey());
@@ -51,5 +62,20 @@ void ScrollExplorer::ShowPreview()
         }
     }
 
+    for (i = EXPLORER_ITEM_R; i < EXPLORER_ITEM_R * 2; i++) {
+        for (int j = 0; j < EXPLORER_ITEM_C; j++) {
+            MGStatic tmp;
+
+            video_items.push_back(tmp);
+
+            // window created in here will be deleted in father window destory
+            video_items[i * EXPLORER_ITEM_C + j].Create(GetContainer(), item_width * j, item_height * i,
+                item_width, item_height, WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_REALSIZEIMAGE | SS_CENTERIMAGE);
+
+            video_items[i * EXPLORER_ITEM_C + j].SetBitmap(&TPUtils::GetResource()->bmp_play);
+        }
+    }
+
     SetContHeight(i * item_height);
+    
 }
