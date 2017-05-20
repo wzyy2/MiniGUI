@@ -85,13 +85,20 @@ TPMainWnd::TPMainWnd()
     explorer_window = NULL;
     setting_window = NULL;
 
-    ret = MGMainWnd::Create(WS_VISIBLE | WS_HIDEMENUBAR | WS_WITHOUTCLOSEMENU,
+    // ret = MGMainWnd::Create(WS_VISIBLE | WS_HIDEMENUBAR | WS_WITHOUTCLOSEMENU,
+    //     "rearview",
+    //     0, 0, g_rcScr.right, g_rcScr.bottom,
+    //     HWND_DESKTOP,
+    //     0, 0, 0, COLOR_lightwhite,
+    //     WS_EX_NONE | WS_EX_AUTOSECONDARYDC,
+    //     parameter_get_video_lan());
+    ret = MGMainWnd::Create(WS_VISIBLE,
         "rearview",
         0, 0, g_rcScr.right, g_rcScr.bottom,
         HWND_DESKTOP,
         0, 0, 0, COLOR_lightwhite,
         WS_EX_NONE | WS_EX_AUTOSECONDARYDC,
-        parameter_get_video_lan());
+        NULL);
     if (ret == FALSE)
         throw std::runtime_error("TPMainWnd init failed");
 
@@ -101,10 +108,10 @@ TPMainWnd::TPMainWnd()
 
     // videosurface
     TPUtils::SetColorkey(GetWindowElementPixel(m_hWnd, WE_BGC_DESKTOP));
-    front_video = new VideoSurface(0, m_hWnd, MAIN_BTN_W * 2, 0,
+    front_video = new VideoSurface(0, TPUtils::GetColorkey(), m_hWnd, MAIN_BTN_W * 2, 0,
         GetWidth() / 2 - MAIN_BTN_W, GetHeight(),
         WS_CHILD | WS_VISIBLE);
-    back_video = new VideoSurface(1, m_hWnd, GetWidth() / 2 + MAIN_BTN_W, 0,
+    back_video = new VideoSurface(1, TPUtils::GetColorkey(), m_hWnd, GetWidth() / 2 + MAIN_BTN_W, 0,
         GetWidth() / 2 - MAIN_BTN_W, GetHeight(),
         WS_CHILD | WS_VISIBLE);
 
