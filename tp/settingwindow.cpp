@@ -14,7 +14,6 @@
 
 #include "tpmainwindow.h"
 #include "tputils.h"
-#include "widget/touchmenu.h"
 
 class SettingButtonNotification : public MGCtrlNotification {
 public:

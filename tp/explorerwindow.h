@@ -1,9 +1,9 @@
 #ifndef EXPLORERWINDOW_H
 #define EXPLORERWINDOW_H
 
+#include "scrollexplorer.h"
 #include "tpcommon.h"
 #include "widget/rkbutton.h"
-#include "widget/scrollexplorer.h"
 
 class ExplorerButtonNotification;
 

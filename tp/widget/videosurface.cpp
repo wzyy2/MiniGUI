@@ -12,9 +12,7 @@
  */
 #include "videosurface.h"
 
-#include "tputils.h"
-
-VideoSurface::VideoSurface(int channel, HWND hWndParent, int x, int y, int w,
+VideoSurface::VideoSurface(int channel, int colorkey, HWND hWndParent, int x, int y, int w,
     int h, DWORD dwStyle, DWORD dwStylEx, int Id,
     int left)
     : MGUserCtrl()
@@ -23,7 +21,7 @@ VideoSurface::VideoSurface(int channel, HWND hWndParent, int x, int y, int w,
     MGUserCtrl::Register(GetClass(), 0);
 
     this->Create(hWndParent, x, y, w, h, dwStyle, dwStylEx, Id);
-    this->SetWindowBkColor(TPUtils::GetColorkey());
+    this->SetWindowBkColor(colorkey);
 }
 
 VideoSurface::~VideoSurface() { this->DestroyWindow(); }

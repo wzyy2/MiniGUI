@@ -1,9 +1,9 @@
 #ifndef SETTINGWINDOW_H
 #define SETTINGWINDOW_H
 
+#include "touchmenu.h"
 #include "tpcommon.h"
 #include "widget/rkbutton.h"
-#include "widget/touchmenu.h"
 
 class SettingButtonNotification;
 class SettingtMenuNotification;
@@ -18,7 +18,6 @@ public:
     DECLARE_CTRL_CLASS("setting")
 
 private:
-
     SettingButtonNotification* button_notification;
     SettingtMenuNotification* menu_notification;
 
