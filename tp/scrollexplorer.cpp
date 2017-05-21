@@ -21,9 +21,9 @@ public:
 
     virtual void OnCtrlNotified(MGWnd* sender, int id, int code, DWORD add_data)
     {
-        if (_caller->isPushed() == TRUE) {
+
             printf("isPushed \n");
-        }
+
     }
 };
 
@@ -59,6 +59,7 @@ void ScrollExplorer::ShowPreview()
 
             video_items[i * EXPLORER_ITEM_C + j].SetWindowBkColor(TPUtils::GetColorkey());
             video_items[i * EXPLORER_ITEM_C + j].SetBitmap(&TPUtils::GetResource()->bmp_play);
+            video_items[i * EXPLORER_ITEM_C + j].SetNotification(button_notification);
         }
     }
 

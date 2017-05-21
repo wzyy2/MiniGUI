@@ -35,7 +35,7 @@ $(CPPOBJS) : %.o : %.cpp
 	$(CXX) $(MYCXXFLAGS) $(INCS) -c $< -o $@
 
 clean:
-	rm -f *.o $(TARGETS)
+	rm -f tp/*.o tp/widget/*.o cpp/*.o $(TARGETS)
 
 
 
