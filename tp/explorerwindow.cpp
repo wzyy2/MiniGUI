@@ -74,10 +74,6 @@ public:
 ExplorerWnd::ExplorerWnd(HWND hParent)
     : MGUserCtrl()
 {
-    active_left = NULL;
-    active_top = NULL;
-    scroll_explorer = NULL;
-
     MGUserCtrl::Register(GetClass(), 0);
 
     this->Create(hParent, 0, 0, g_rcScr.right, g_rcScr.bottom,

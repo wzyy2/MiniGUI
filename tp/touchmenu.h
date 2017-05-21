@@ -51,7 +51,7 @@ public:
         return ::ShowWindow(m_hWnd, iCmdShow);
     }
 
-    inline void SetDefaultItemHeight(int height) { item_height = height; };
+    inline void SetDefaultItemHeight(int height) { _item_height = height; };
 
     inline int GetIndex(HSVITEM handle)
     {
@@ -79,7 +79,7 @@ public:
 
 private:
     TouchMenu* left_menu = NULL;
-    int item_height;
+    int _item_height = 100;
 
     struct MenuElement {
         SVITEMINFO info;

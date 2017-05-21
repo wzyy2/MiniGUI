@@ -81,6 +81,13 @@ TouchScrollWnd::TouchScrollWnd(HWND hWndParent, int x, int y, int w, int h, DWOR
     PSWDATA pswdata;
     _pushed = FALSE;
 
+    if (dwStyle & WS_VSCROLL) {
+        _y_scroll = 1;
+    }
+    if (dwStyle & WS_HSCROLL) {
+        _x_scroll = 1;
+    }
+
     // scroll window will use WindowAdditionalData when create, we can't use default create function
     m_hWnd = CreateWindowEx(GetClass(), "", dwStyle | WS_CHILD, dwStylEx, Id, x,
         y, w, h, hWndParent, (DWORD)NULL);
@@ -110,14 +117,17 @@ void TouchScrollWnd::TouchMove(int x, int y)
         gettimeofday(&tmp_time, NULL);
         move_time = TIMEVAL2MS(tmp_time);
 
-        printf("MSG_HITTEST %d %d %d\n", move_x, move_y, move_time);
-
         if (move_time - _down_time > 100) {
-            if (abs(move_x) > 25 || abs(move_y) > 25) {
+            if (_x_scroll && (abs(move_x) > _x_trigger) || (abs(move_y) > _y_trigger) && _y_scroll) {
                 _down_time = move_time;
                 _down_x = x;
                 _down_y = y;
-                printf("flush !! \n", move_x, move_y);
+                if (_x_scroll) {
+                    SetContenPos(GetContentX() + move_x * _scale, GetContentY());
+                }
+                if (_y_scroll) {
+                    SetContenPos(GetContentX(), GetContentY() + move_y * _scale);
+                }
             }
         }
     }
@@ -127,10 +137,9 @@ BOOL TouchScrollWnd::WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret)
 {
     switch (iMsg) {
     case MSG_MOUSEMOVE:
-        printf(" MSG_MOUSEMOVE\n");
+        TouchMove((lParam & 0xffff), (lParam & 0xffff0000) >> 16);
         break;
-    case MSG_NCLBUTTONDOWN:
-    printf(" MSG_NCLBUTTONDOWN\n");
+    case MSG_LBUTTONDOWN:
         timeval tmp_time;
         _pushed = TRUE;
         _down_x = (lParam & 0xffff);
@@ -138,14 +147,17 @@ BOOL TouchScrollWnd::WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret)
         gettimeofday(&tmp_time, NULL);
         _down_time = TIMEVAL2MS(tmp_time);
         break;
-    case MSG_NCLBUTTONUP:
-     printf(" MSG_NCLBUTTONUP\n");
+    case MSG_LBUTTONUP:
         _pushed = FALSE;
         break;
+    case MSG_NCLBUTTONDOWN:
+        break;
+    case MSG_NCLBUTTONUP:
+        break;
     case MSG_HITTEST:
-        TouchMove(wParam, lParam);
+        //TouchMove(wParam, lParam);
         // HACK ： always use nc
-        *pret = 0x12;
+        *pret = HT_CLIENT;
         return TRUE;
     }
     return FALSE;

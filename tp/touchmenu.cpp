@@ -16,8 +16,6 @@ TouchMenu::TouchMenu(HWND hWndParent, int x, int y, int w, int h,
     DWORD dwStyle, DWORD dwStylEx, int Id, int left)
     : MGScrollView()
 {
-    item_height = 100;
-
     Create(hWndParent, x, y, w, h, dwStyle, dwStylEx, Id);
 
     if (!left) {
@@ -45,7 +43,7 @@ BOOL TouchMenu::AddMenuItem(const char* desc)
     struct MenuElement element;
 
     item.nItem = save_items.size();
-    item.nItemHeight = item_height;
+    item.nItemHeight = _item_height;
     item.addData = (DWORD)desc;
 
     if (AddItem(&item, &item_h))

@@ -2,9 +2,9 @@
 #define TPMAINWINDOW_H
 
 #include "tpcommon.h"
+#include "widget/loadingindicator.h"
 #include "widget/rkbutton.h"
 #include "widget/videosurface.h"
-#include "widget/loadingindicator.h"
 
 class MainButtonNotification;
 
@@ -22,29 +22,29 @@ private:
     ~TPMainWnd();
 
     void InitButton();
-    
+
     BOOL WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret);
 
-    MainButtonNotification* button_notification;
+    MainButtonNotification* button_notification = NULL;
 
-    RKButton* preview_button;
-    RKButton* sleep_button;
-    RKButton* audio_button;
-    RKButton* explorer_button;
+    RKButton* preview_button = NULL;
+    RKButton* sleep_button = NULL;
+    RKButton* audio_button = NULL;
+    RKButton* explorer_button = NULL;
 
-    RKButton* setting_button;
-    RKButton* captrue_button;
-    RKButton* lock_button;
-    RKButton* record_button;
+    RKButton* setting_button = NULL;
+    RKButton* captrue_button = NULL;
+    RKButton* lock_button = NULL;
+    RKButton* record_button = NULL;
 
-    MGWnd* preview_window;
-    MGWnd* explorer_window;
-    MGWnd* setting_window;
+    MGWnd* preview_window = NULL;
+    MGWnd* explorer_window = NULL;
+    MGWnd* setting_window = NULL;
 
-    VideoSurface* front_video;
-    VideoSurface* back_video;
+    VideoSurface* front_video = NULL;
+    VideoSurface* back_video = NULL;
 
-    LoadingIndicator* loading_indicator;
+    LoadingIndicator* loading_indicator = NULL;
 
     static TPMainWnd* pInstance;
 };

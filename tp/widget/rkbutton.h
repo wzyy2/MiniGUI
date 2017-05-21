@@ -33,7 +33,7 @@ public:
     {
         return _state;
     }
-    
+
     int SetState(enum State a);
 
 private:
@@ -42,7 +42,7 @@ private:
     ;
     PBITMAP _pbmp[3];
 
-    PBITMAP _display_bmp;
+    PBITMAP _display_bmp = NULL;
 
     BOOL WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret);
 };

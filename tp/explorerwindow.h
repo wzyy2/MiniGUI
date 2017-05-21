@@ -27,10 +27,9 @@ private:
     RKButton* front_button;
     RKButton* back_button;
 
-    RKButton* active_left;
-    RKButton* active_top;
-
-    ScrollExplorer* scroll_explorer;
+    RKButton* active_left = NULL;
+    RKButton* active_top = NULL;
+    ScrollExplorer* scroll_explorer = NULL;
 
     ExplorerButtonNotification* button_notification;
 

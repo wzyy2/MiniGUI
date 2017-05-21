@@ -17,6 +17,11 @@ public:
         _scale = speed;
     }
 
+    inline void SetScrollDir(int scroll_x, int scroll_y) {
+        _x_scroll = scroll_x;
+        _y_scroll = scroll_y;
+    }
+
     inline BOOL isPushed() {
         return _pushed;
     }
@@ -24,7 +29,11 @@ public:
 private:
     HWND h_container;
     BOOL _pushed;
-    int _scale = 2;
+    int _scale = -1;
+    int _x_trigger = 15;
+    int _y_trigger = 15;
+    int _x_scroll = 0;
+    int _y_scroll = 0;
 
     int _down_x, _down_y;
     long _down_time;

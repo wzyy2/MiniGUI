@@ -15,8 +15,6 @@
 RKButton::RKButton(HWND hWndParent, int x, int y, int w, int h)
     : MGUserCtrl()
 {
-    _display_bmp = NULL;
-
     MGUserCtrl::Register(GetClass(), 0);
 
     this->Create(hWndParent, x, y, w, h,

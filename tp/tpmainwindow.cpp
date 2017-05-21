@@ -81,10 +81,6 @@ TPMainWnd::TPMainWnd()
 {
     BOOL ret;
 
-    preview_window = NULL;
-    explorer_window = NULL;
-    setting_window = NULL;
-
     // ret = MGMainWnd::Create(WS_VISIBLE | WS_HIDEMENUBAR | WS_WITHOUTCLOSEMENU,
     //     "rearview",
     //     0, 0, g_rcScr.right, g_rcScr.bottom,
@@ -100,7 +96,7 @@ TPMainWnd::TPMainWnd()
         WS_EX_NONE | WS_EX_AUTOSECONDARYDC,
         NULL);
     if (ret == FALSE)
-        throw std::runtime_error("TPMainWnd init failed");
+        printf("TPMainWnd init failed");
 
     this->SetAlpha(MEMDC_FLAG_SWSURFACE, 0);
 
