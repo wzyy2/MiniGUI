@@ -12,13 +12,13 @@
  */
 #include "rkbutton.h"
 
-RKButton::RKButton(HWND hWndParent, int x, int y, int w, int h)
+RKButton::RKButton(HWND hWndParent, int x, int y, int w, int h, DWORD dwStyle)
     : MGUserCtrl()
 {
+    bzero(_pbmp, sizeof(PBITMAP) * 3);
     MGUserCtrl::Register(GetClass(), 0);
 
-    this->Create(hWndParent, x, y, w, h,
-        WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_REALSIZEIMAGE | SS_CENTERIMAGE | SS_NOTIFY);
+    this->Create(hWndParent, x, y, w, h, dwStyle);
 }
 
 RKButton::~RKButton()
@@ -184,6 +184,9 @@ BOOL RKButton::WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret)
             case SS_RIGHT:
                 uFormat |= DT_RIGHT;
                 break;
+            case SS_VCENTER:
+                uFormat |= DT_VCENTER | DT_CENTER | DT_SINGLELINE;
+                break;
             }
 
             if (dwStyle & SS_LEFTNOWORDWRAP) {
@@ -198,6 +201,7 @@ BOOL RKButton::WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret)
             spCaption = ::GetWindowCaption(m_hWnd);
 
             if (spCaption) {
+                SetTextColor(hdc, text_color);
                 SetBkMode(hdc, BM_TRANSPARENT);
                 DrawText(hdc, spCaption, -1, &rcClient, uFormat);
             }

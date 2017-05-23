@@ -2,7 +2,8 @@
 #define SCROLLEXPLORER_H
 
 #include "tpcommon.h"
-#include "touchscrollwindow.h"
+#include "widget/previewitem.h"
+#include "widget/touchscrollwindow.h"
 
 class ScrollExplorerButtonNotification;
 
@@ -15,8 +16,8 @@ public:
     ~ScrollExplorer();
 
 private:
-    std::vector<MGStatic> video_items;
-    ScrollExplorerButtonNotification *button_notification;
+    std::vector<PreviewItem*> video_items;
+    ScrollExplorerButtonNotification* button_notification;
 
     void ShowPreview();
 };

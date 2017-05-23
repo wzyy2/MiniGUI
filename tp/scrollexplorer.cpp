@@ -21,9 +21,10 @@ public:
 
     virtual void OnCtrlNotified(MGWnd* sender, int id, int code, DWORD add_data)
     {
+        if (_caller->isMoved())
+            return;
 
-            printf("isPushed \n");
-
+        printf("isPushed \n");
     }
 };
 
@@ -37,6 +38,10 @@ ScrollExplorer::ScrollExplorer(HWND hWndParent, int x, int y, int w, int h, DWOR
 
 ScrollExplorer::~ScrollExplorer()
 {
+    for (auto iter = video_items.cbegin(); iter != video_items.cend(); iter++) {
+        delete *iter;
+    }
+
     delete button_notification;
 }
 
@@ -49,34 +54,23 @@ void ScrollExplorer::ShowPreview()
     /* fake data */
     for (i = 0; i < EXPLORER_ITEM_R; i++) {
         for (int j = 0; j < EXPLORER_ITEM_C; j++) {
-            MGStatic tmp;
+            PreviewItem* tmp = new PreviewItem(&TPUtils::GetResource()->bmp_play, TPUtils::GetColorkey(),
+                GetContainer(), item_width * j, item_height * i, item_width, item_height);
 
             video_items.push_back(tmp);
-
-            // window created in here will be deleted in father window destory
-            video_items[i * EXPLORER_ITEM_C + j].Create(GetContainer(), item_width * j, item_height * i,
-                item_width, item_height, WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_REALSIZEIMAGE | SS_CENTERIMAGE);
-
-            video_items[i * EXPLORER_ITEM_C + j].SetWindowBkColor(TPUtils::GetColorkey());
-            video_items[i * EXPLORER_ITEM_C + j].SetBitmap(&TPUtils::GetResource()->bmp_play);
-            video_items[i * EXPLORER_ITEM_C + j].SetNotification(button_notification);
+            video_items[i * EXPLORER_ITEM_C + j]->SetNotification(button_notification);
         }
     }
 
     for (i = EXPLORER_ITEM_R; i < EXPLORER_ITEM_R * 2; i++) {
         for (int j = 0; j < EXPLORER_ITEM_C; j++) {
-            MGStatic tmp;
+            PreviewItem* tmp = new PreviewItem(&TPUtils::GetResource()->bmp_play, TPUtils::GetColorkey(),
+                GetContainer(), item_width * j, item_height * i, item_width, item_height);
 
             video_items.push_back(tmp);
-
-            // window created in here will be deleted in father window destory
-            video_items[i * EXPLORER_ITEM_C + j].Create(GetContainer(), item_width * j, item_height * i,
-                item_width, item_height, WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_REALSIZEIMAGE | SS_CENTERIMAGE);
-
-            video_items[i * EXPLORER_ITEM_C + j].SetBitmap(&TPUtils::GetResource()->bmp_play);
+            video_items[i * EXPLORER_ITEM_C + j]->SetNotification(button_notification);
         }
     }
 
     SetContHeight(i * item_height);
-    
 }

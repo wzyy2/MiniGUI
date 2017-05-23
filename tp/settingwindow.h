@@ -1,16 +1,14 @@
 #ifndef SETTINGWINDOW_H
 #define SETTINGWINDOW_H
 
-#include "touchmenu.h"
 #include "tpcommon.h"
 #include "widget/rkbutton.h"
+#include "widget/touchmenu.h"
 
 class SettingButtonNotification;
-class SettingtMenuNotification;
 
 class SettingWnd : public MGUserCtrl {
     friend class SettingButtonNotification;
-    friend class SettingtMenuNotification;
 
 public:
     SettingWnd(HWND hParent);
@@ -19,7 +17,6 @@ public:
 
 private:
     SettingButtonNotification* button_notification;
-    SettingtMenuNotification* menu_notification;
 
     RKButton* video_button;
     RKButton* system_button;
@@ -28,8 +25,15 @@ private:
     TouchMenu* video_menu;
     TouchMenu* system_menu;
 
-    void InitMenu();
     BOOL WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret);
+
+    MGButton* AddRadioButton(TouchMenu* parent, const char* desc);
+
+    void CreateSystemMenu();
+    void CreateVideoMenu();
+
+    static void CreateSystemOption(TouchMenu* parent, MGWnd* sender);
+    static void CreateVideoOption(TouchMenu* parent, MGWnd* sender);
 };
 
 #endif

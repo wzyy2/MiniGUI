@@ -13,12 +13,12 @@
 #include "tputils.h"
 
 namespace TPUtils {
-TPResource* tp_resource;
-int color_key;
+TPResource* ktp_resource;
+int kcolor_key;
 
-short screenoff_time;
-void* keypress_sound;
-void* capture_sound;
+short kscreenoff_time;
+void* kkeypress_sound;
+void* kcapture_sound;
 
 void RegisterCallback()
 {
@@ -53,7 +53,7 @@ BOOL Init()
     char collision_level;
     char parkingrec = 0;
 
-    tp_resource = new TPResource();
+    ktp_resource = new TPResource();
 
 #ifdef USE_WATCHDOG
     char pathname[] = "/dev/watchdog";
@@ -73,7 +73,7 @@ BOOL Init()
     video_record_init_lock();
     parameter_init();
 
-    screenoff_time = parameter_get_screenoff_time();
+    kscreenoff_time = parameter_get_screenoff_time();
     if (0 != audio_dev_init()) {
         printf("audio_dev_init failed\n");
     }
@@ -81,11 +81,11 @@ BOOL Init()
     // test code start
     // file path should be read from config_file, TODO
     // these files are copied from $ANDROID_PROJECT/frameworks/base/data/sounds
-    if (audio_play_init(&keypress_sound,
+    if (audio_play_init(&kkeypress_sound,
             "/usr/local/share/sounds/KeypressStandard.wav", 1)) {
         printf("keypress sound init failed\n");
     }
-    if (audio_play_init(&capture_sound,
+    if (audio_play_init(&kcapture_sound,
             "/usr/local/share/sounds/camera_click.wav", 1)) {
         printf("capture sound init failed\n");
     }
@@ -140,8 +140,8 @@ BOOL Init()
     // ui_init_uvc();
 
     // test code start
-    audio_play_deinit(keypress_sound);
-    audio_play_deinit(capture_sound);
+    audio_play_deinit(kkeypress_sound);
+    audio_play_deinit(kcapture_sound);
     // test code end
     audio_dev_deinit();
 
@@ -186,7 +186,7 @@ BOOL Exit()
     }
     gsensor_release();
 
-    delete tp_resource;
+    delete ktp_resource;
 
     return TRUE;
 }
@@ -194,6 +194,8 @@ BOOL Exit()
 void SetColorkey(DWORD bkColor)
 {
     struct color_key key;
+
+    kcolor_key = bkColor;
 
     key.blue = (bkColor & 0x1f) << 3;
     key.green = ((bkColor >> 5) & 0x3f) << 2;
@@ -219,12 +221,12 @@ void SetColorkey(DWORD bkColor)
 
 int GetColorkey()
 {
-    return color_key;
+    return kcolor_key;
 }
 
 TPResource* GetResource()
 {
-    return tp_resource;
+    return ktp_resource;
 }
 
 int Suspend()

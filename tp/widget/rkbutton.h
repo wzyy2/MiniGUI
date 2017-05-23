@@ -3,9 +3,12 @@
 
 #include "tpcommon.h"
 
+#define SS_VCENTER 0x00000040L
+
 class RKButton : public MGUserCtrl {
 public:
-    RKButton(HWND hWndParent, int x, int y, int w, int h);
+    RKButton(HWND hWndParent, int x, int y, int w, int h,
+        DWORD dwStyle = WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_REALSIZEIMAGE | SS_CENTERIMAGE | SS_NOTIFY);
     ~RKButton();
     DECLARE_CTRL_CLASS("rkbutton")
 
@@ -24,6 +27,12 @@ public:
         SetState(kEnumOFF);
     }
 
+    inline void SetTextColor2(gal_pixel color)
+    {
+        text_color = color;
+        InvalidateRect();
+    }
+
     inline PBITMAP SetBitmap(PBITMAP pbmp)
     {
         return (PBITMAP)SendMessage(STM_SETIMAGE, (WPARAM)pbmp);
@@ -39,7 +48,9 @@ public:
 private:
     enum State _state = kEnumOFF;
     enum State _state_back = kEnumOFF;
-    ;
+
+    gal_pixel text_color = COLOR_lightwhite;
+
     PBITMAP _pbmp[3];
 
     PBITMAP _display_bmp = NULL;

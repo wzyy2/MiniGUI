@@ -102,17 +102,12 @@ TPMainWnd::TPMainWnd()
 
     // videosurface
     TPUtils::SetColorkey(GetWindowElementPixel(m_hWnd, WE_BGC_DESKTOP));
-    front_video = new VideoSurface(0, m_hWnd, MAIN_BTN_W * 2, 0,
+    front_video = new VideoSurface(0, TPUtils::GetColorkey(), m_hWnd, MAIN_BTN_W * 2, 0,
         GetWidth() / 2 - MAIN_BTN_W, GetHeight(),
         WS_CHILD | WS_VISIBLE);
-    back_video = new VideoSurface(1, m_hWnd, GetWidth() / 2 + MAIN_BTN_W, 0,
+    back_video = new VideoSurface(1, TPUtils::GetColorkey(), m_hWnd, GetWidth() / 2 + MAIN_BTN_W, 0,
         GetWidth() / 2 - MAIN_BTN_W, GetHeight(),
         WS_CHILD | WS_VISIBLE);
-
-    // subwindow
-    // preview_window = new PreviewWnd(m_hWnd);
-    //explorer_window = new ExplorerWnd(m_hWnd);
-    // setting_window = new SettingWnd(m_hWnd);
 
     //background
     this->SetWindowBkColor(THEME_COLOR);

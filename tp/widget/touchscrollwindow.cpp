@@ -116,12 +116,13 @@ void TouchScrollWnd::TouchMove(int x, int y)
 
         gettimeofday(&tmp_time, NULL);
         move_time = TIMEVAL2MS(tmp_time);
-
-        if (move_time - _down_time > 100) {
-            if (_x_scroll && (abs(move_x) > _x_trigger) || (abs(move_y) > _y_trigger) && _y_scroll) {
+        if (move_time - _down_time > 50) {
+            if ((_x_scroll && (abs(move_x) > _x_trigger)) || ((abs(move_y) > _y_trigger) && _y_scroll)) {
                 _down_time = move_time;
                 _down_x = x;
                 _down_y = y;
+                _moved = TRUE;
+                printf("flush %d %d \n", move_x, move_y);
                 SetContenPos(GetContentX() + move_x * _scale * _x_scroll, GetContentY() + move_y * _scale * _y_scroll);
             }
         }
@@ -130,19 +131,40 @@ void TouchScrollWnd::TouchMove(int x, int y)
 
 BOOL TouchScrollWnd::WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret)
 {
+    timeval tmp_time;
+    int x;
+    int y;
+
     switch (iMsg) {
     case MSG_MOUSEMOVE:
-        TouchMove((lParam & 0xffff), (lParam & 0xffff0000) >> 16);
+        x = LOWORD(lParam);
+        y = HIWORD(lParam);
+        if (_down_x == 0 && _down_y == 0) {
+            _down_x = x;
+            _down_y = y;
+        }
+        TouchMove(x, y);
         break;
     case MSG_LBUTTONDOWN:
-        timeval tmp_time;
+        SetCapture(m_hWnd);
         _pushed = TRUE;
-        _down_x = (lParam & 0xffff);
-        _down_y = (lParam & 0xffff0000) >> 16;
+        _moved = FALSE;
+        // x,y give by MSG_LBUTTONDOWN will be wrong in scroll window.
+        _down_x = 0;
+        _down_y = 0;
         gettimeofday(&tmp_time, NULL);
         _down_time = TIMEVAL2MS(tmp_time);
         break;
     case MSG_LBUTTONUP:
+        if (_pushed) {
+            x = LOWORD(lParam);
+            y = HIWORD(lParam);
+            if (_down_x == 0 && _down_y == 0) {
+                _down_x = x;
+                _down_y = y;
+            }
+            TouchMove(x, y);
+        }
         _pushed = FALSE;
         break;
     case MSG_NCLBUTTONDOWN:

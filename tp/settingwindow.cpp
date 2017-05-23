@@ -32,16 +32,18 @@ public:
             }
         } else if (sender == _caller->system_button) {
             if (code == STN_CLICKED) {
-                _caller->system_menu->ShowWindow(SW_SHOWNORMAL);
-                _caller->video_menu->ShowWindow(SW_HIDE);
+                delete _caller->video_menu;
+                _caller->video_menu = NULL;
+                _caller->CreateSystemMenu();
                 _caller->system_button->SetState(RKButton::kEnumON);
                 _caller->video_button->SetState(RKButton::kEnumOFF);
             }
 
         } else if (sender == _caller->video_button) {
             if (code == STN_CLICKED) {
-                _caller->system_menu->ShowWindow(SW_HIDE);
-                _caller->video_menu->ShowWindow(SW_SHOWNORMAL);
+                delete _caller->system_menu;
+                _caller->system_menu = NULL;
+                _caller->CreateVideoMenu();
                 _caller->system_button->SetState(RKButton::kEnumOFF);
                 _caller->video_button->SetState(RKButton::kEnumON);
             }
@@ -49,41 +51,10 @@ public:
     }
 };
 
-class SettingtMenuNotification : public MGCtrlNotification {
-public:
-    SettingWnd* _caller;
-    SettingtMenuNotification(SettingWnd* caller)
-    {
-        _caller = caller;
-    }
-
-    virtual void OnCtrlNotified(MGWnd* sender, int id, int code, DWORD add_data)
-    {
-        int index = add_data;
-
-        if (sender == _caller->video_menu) {
-            switch (_caller->video_menu->GetCurSel()) {
-            case 0:
-
-                break;
-            case 1:
-
-                break;
-            }
-        } else if (sender == _caller->system_menu) {
-            switch (_caller->system_menu->GetCurSel()) {
-            case 0:
-
-                break;
-            case 1:
-                break;
-            }
-        }
-    }
-};
-
 SettingWnd::SettingWnd(HWND hParent)
     : MGUserCtrl()
+    , video_menu(NULL)
+    , system_menu(NULL)
 {
     RECT rc;
 
@@ -93,7 +64,6 @@ SettingWnd::SettingWnd(HWND hParent)
         WS_CHILD | WS_VISIBLE);
 
     button_notification = new SettingButtonNotification(this);
-    menu_notification = new SettingtMenuNotification(this);
 
     return_button = new RKButton(m_hWnd, 0, 0, SIDE_W, RETURN_H);
     return_button->SetNotification(button_notification);
@@ -109,14 +79,10 @@ SettingWnd::SettingWnd(HWND hParent)
     system_button->GetBound(&rc);
     system_button->SetNotification(button_notification);
 
-    InitMenu();
-
-    {
-        button_notification->OnCtrlNotified(video_button, 0, STN_CLICKED, 0);
-    }
+    button_notification->OnCtrlNotified(video_button, 0, STN_CLICKED, 0);
 
     //background
-    this->SetWindowBkColor(THEME_COLOR);
+    this->SetWindowBkColor(COLOR_lightwhite);
 }
 
 SettingWnd::~SettingWnd()
@@ -133,51 +99,94 @@ SettingWnd::~SettingWnd()
     DestroyWindow();
 }
 
-void SettingWnd::InitMenu()
-{
-    // setting menu
-    video_menu = new TouchMenu(m_hWnd, SIDE_W, 0,
-        GetWidth() - SIDE_W, GetHeight(),
-        WS_CHILD | WS_VSCROLL | WS_VISIBLE);
-    video_menu->CreateLeft(m_hWnd, (GetWidth() + SIDE_W) / 2, 0,
-        (GetWidth() - SIDE_W) / 2, GetHeight(),
-        WS_CHILD | WS_VSCROLL | WS_VISIBLE);
-
-    video_menu->SetDefaultItemHeight(SETTING_ITEM_H);
-    video_menu->AddMenuItem("111\n");
-
-    system_menu = new TouchMenu(m_hWnd, SIDE_W, 0,
-        (GetWidth() - SIDE_W) / 2, GetHeight(),
-        WS_CHILD | WS_VSCROLL | SVS_AUTOSORT);
-    system_menu->CreateLeft(m_hWnd, (GetWidth() + SIDE_W) / 2, 0,
-        (GetWidth() - SIDE_W) / 2, GetHeight(),
-        WS_CHILD | WS_VSCROLL | SVS_AUTOSORT);
-
-    system_menu->SetDefaultItemHeight(SETTING_ITEM_H);
-    system_menu->AddMenuItem("record resulotion\n");
-    system_menu->AddOption(0, "333\n");
-    system_menu->AddOption(0, "444\n");
-
-    system_menu->AddMenuItem("captrue resulotio\n");
-    system_menu->AddMenuItem("record mode\n");
-
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-    system_menu->AddMenuItem("record time\n");
-
-    video_menu->SetNotification(menu_notification);
-    system_menu->SetNotification(menu_notification);
-}
-
 BOOL SettingWnd::WndProc(int iMsg, WPARAM wParam, LPARAM lParam, int* pret)
 {
 
     return FALSE;
+}
+
+MGButton* SettingWnd::AddRadioButton(TouchMenu* parent, const char* desc)
+{
+    MGButton* tmp;
+    DWORD dwStyle = WS_CHILD | BS_AUTORADIOBUTTON | WS_VISIBLE;
+    if (parent->GetOptionSize() == 0)
+        dwStyle |= WS_GROUP;
+    tmp = new MGButton();
+    tmp->Create(parent->GetHandle(), 0, parent->GetOptionSize() * parent->GetDefaultHeight(),
+        parent->GetWidth(), parent->GetDefaultHeight(), dwStyle);
+    tmp->SetWindowText(desc);
+    tmp->SetWindowBkColor(COLOR_lightwhite);
+
+    parent->AddOtion(tmp);
+
+    return tmp;
+}
+
+void SettingWnd::CreateSystemMenu()
+{
+    system_menu = new TouchMenu(m_hWnd, SIDE_W, 0,
+        (GetWidth() - SIDE_W) / 2, GetHeight(),
+        WS_CHILD | WS_VISIBLE | WS_VSCROLL);
+
+    system_menu->SetWindowBkColor(THEME_COLOR);
+    system_menu->AddSetting("Boot mode", SettingWnd::CreateSystemOption);
+    system_menu->AddSetting("Date", SettingWnd::CreateSystemOption);
+    system_menu->AddSetting("Gravity", SettingWnd::CreateSystemOption);
+    system_menu->AddSetting("Parking guard", SettingWnd::CreateSystemOption);
+    system_menu->AddSetting("Language", SettingWnd::CreateSystemOption);
+    system_menu->AddSetting("Format", SettingWnd::CreateSystemOption);
+}
+
+void SettingWnd::CreateVideoMenu()
+{
+    video_menu = new TouchMenu(m_hWnd, SIDE_W, 0,
+        (GetWidth() - SIDE_W) / 2, GetHeight(),
+        WS_CHILD | WS_VISIBLE | WS_VSCROLL);
+
+    video_menu->SetWindowBkColor(THEME_COLOR);
+    video_menu->AddSetting("Video resolution", SettingWnd::CreateVideoOption);
+    video_menu->AddSetting("Capture resolution", SettingWnd::CreateVideoOption);
+    video_menu->AddSetting("Video mode", SettingWnd::CreateVideoOption);
+    video_menu->AddSetting("Video duration", SettingWnd::CreateVideoOption);
+    video_menu->AddSetting("Exposure", SettingWnd::CreateVideoOption);
+    video_menu->AddSetting("Record", SettingWnd::CreateVideoOption);
+    video_menu->AddSetting("Watermark", SettingWnd::CreateVideoOption);
+}
+
+void SettingWnd::CreateSystemOption(TouchMenu* parent, MGWnd* sender)
+{
+    SettingWnd* wnd = (SettingWnd*)WndFromHandle(parent->GetParent());
+    char* text = new char[sender->GetWindowTextLength() + 2];
+
+    sender->GetWindowText(text, sender->GetWindowTextLength() + 2);
+    if (!strcmp(text, "Video resolution")) {
+    }
+
+    delete text;
+}
+
+void SettingWnd::CreateVideoOption(TouchMenu* parent, MGWnd* sender)
+{
+    SettingWnd* wnd = (SettingWnd*)WndFromHandle(parent->GetParent());
+    char* text = new char[sender->GetWindowTextLength() + 2];
+
+    sender->GetWindowText(text, sender->GetWindowTextLength() + 2);
+    if (!strcmp(text, "Video resolution")) {
+        MGButton* tmp;
+        char option[2][20] = { "1080p", "720p" };
+
+        auto func
+            = [](HWND hWnd, int id, int code, DWORD add_data) {
+                  printf("Hello world");
+              };
+
+        tmp = wnd->AddRadioButton(parent, option[0]);
+        ::SetNotificationCallback(tmp->GetHandle(), (NOTIFPROC)func);
+        tmp = wnd->AddRadioButton(parent, option[1]);
+        ::SetNotificationCallback(tmp->GetHandle(), (NOTIFPROC)func);
+        tmp = wnd->AddRadioButton(parent, option[1]);
+        ::SetNotificationCallback(tmp->GetHandle(), (NOTIFPROC)func);
+    }
+
+    delete text;
 }
